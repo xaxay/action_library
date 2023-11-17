@@ -33,7 +33,7 @@ jobs:
       # Add validation steps here
 
       - name: Tag New Version
-        uses: your-username/action-repository-name@main
+        uses: xaxay/action-library/actions/tag-new-version@main
         id: new-version
 
       - name: Use New Version
