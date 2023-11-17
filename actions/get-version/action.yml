@@ -1,15 +1,16 @@
-name: Tag new version
-description: Add new version tag for the current branch.
+name: Get version
+description: Get version for a specified branch name.
 
-inputs: {} # No inputs required
+inputs:
+  branch: The name of the branch for which version information should be retrived.
 
 outputs:
   branch:
-    description: The name of the current branch that has been tagged.
+    description: The name of the branch for which version information was retrived.
   version:
-    description: The new version tag created.
-  old-version:
-    description: The previous version tag before the new one was created.
+    description: The current latest version tag.
+  new-version:
+    description: The next version tag.
 
 runs:
   using: ubuntu_latest
@@ -17,8 +18,14 @@ runs:
     - env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        BRANCH="${GITHUB_REF#refs/heads/}"
-        echo "Current branch is $BRANCH"
+        BRANCH=${{ inputs.branch }}
+
+        if [[ -z "$BRANCH" ]]; then
+          # use current branch bname
+          BRANCH="${GITHUB_REF#refs/heads/}"
+        fi
+        
+        echo "Getting version inforamtion for brach $BRANCH"
 
         TAGS=$(git tag --list --merged $BRANCH)
 
@@ -44,13 +51,9 @@ runs:
         NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
         echo "New tag version is $NEW_VERSION"
 
-        # Add new version tag and push
-        git tag -a "$NEW_VERSION" -m "Version $NEW_VERSION"
-        git push origin "$NEW_VERSION"
-
         # Set the outputs
         echo "::set-output name=branch::$BRANCH"
-        echo "::set-output name=version::$NEW_VERSION"
+        echo "::set-output name=new-version::$NEW_VERSION"
         echo "::set-output name=old-version::$VERSION"
 
         # Set the environemnt variables

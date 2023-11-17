@@ -15,9 +15,7 @@ No input arguments required.
 
 ## Usage example
 
-## Usage Example
-
-To use this action in your workflow, add the following steps to your `.github/workflows/main.yml` file:
+To use this action in your workflow, add the following steps to your `.github/workflows/some-workflow-file.yml` file:
 
 ```yml
 name: Your workflow
@@ -30,9 +28,8 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
 
-      # Add validation steps here
-
-      - name: Tag New Version
+      # Add validation steps her
+        uses: xaxay/action-libr
         uses: xaxay/action-library/actions/tag-new-version@main
         id: new-version
 
@@ -45,4 +42,6 @@ jobs:
           echo "The branch '$BRANCH' was tagged with new version '$VERSION'"
 
       # Add CD steps here 
+```
+ps here 
 ```
