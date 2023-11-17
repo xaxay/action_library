@@ -2,11 +2,12 @@ name: Get version
 description: Get version for a specified branch name.
 
 inputs:
-  branch: The name of the branch for which version information should be retrived.
+  branch:
+    description: The name of the branch for which version information should be retrieved.
 
 outputs:
   branch:
-    description: The name of the branch for which version information was retrived.
+    description: The name of the branch for which version information was retrieved.
   version:
     description: The current latest version tag.
   new-version:
@@ -20,43 +21,36 @@ runs:
       run: |
         BRANCH=${{ inputs.branch }}
 
+        # Fallback to current branch name if input branch is not provided
         if [[ -z "$BRANCH" ]]; then
-          # use current branch bname
           BRANCH="${GITHUB_REF#refs/heads/}"
         fi
         
-        echo "Getting version inforamtion for brach $BRANCH"
+        echo "Getting version information for branch $BRANCH"
 
         TAGS=$(git tag --list --merged $BRANCH)
-
         VERSION_TAGS=$(echo "$TAGS" | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$')
         
         VERSION=$(echo "$VERSION_TAGS" | sort -V | tail -n1)
-        # Check if the latest version is empty
+
         if [ -z "$VERSION" ]; then
           echo "Error: No version tags found"
           exit 1
         fi
         echo "Latest tag version is $VERSION"
 
-        # Extract the current version numbers
         MAJOR=$(echo "$VERSION" | cut -d. -f1)
         MINOR=$(echo "$VERSION" | cut -d. -f2)
         PATCH=$(echo "$VERSION" | cut -d. -f3)
 
-        # Increment the patch version
         NEW_PATCH=$((PATCH + 1))
-
-        # Construct the new version tag
         NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
         echo "New tag version is $NEW_VERSION"
 
-        # Set the outputs
         echo "::set-output name=branch::$BRANCH"
         echo "::set-output name=new-version::$NEW_VERSION"
-        echo "::set-output name=old-version::$VERSION"
+        echo "::set-output name=version::$VERSION"
 
-        # Set the environemnt variables
         echo "BRANCH=$BRANCH" >> $GITHUB_ENV
-        echo "VERSION=$NEW_VERSION" >> $GITHUB_ENV
-        echo "OLD_VERSION=$VERSION" >> $GITHUB_ENV
+        echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+        echo "VERSION=$VERSION" >> $GITHUB_ENV
