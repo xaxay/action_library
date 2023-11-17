@@ -1,21 +1,23 @@
 # Tag new version 
 
-This action adds new tag version.
+This GitHub Action creates a new version tag for the current branch by incrementing the patch number of the latest version tag found.
 
 ## Inputs
 
-no input arguments
+No input arguments required.
 
 ## Outputs
 
-`version` - New version. Alternativ access to it through environemnt variable `VERSION`.
-`old-version` - Old version. Alternativ access to it through environemnt variable `OLD_VERSION`.
-`branch` - Tagged branch name. Alternativ access to it through environemnt variable: `BRANCH`.
+- `version`: The new version tag created. Alternatively, access it through the environment variable `VERSION`.
+- `old-version`: The previous version tag before the new one was created. Alternatively, access it through the environment variable `OLD_VERSION`.
+- `branch`: The name of the current branch that has been tagged. Alternatively, access it through the environment variable `BRANCH`.
 
 
 ## Usage example
 
-To use this action in your workflow, add the following step:
+## Usage Example
+
+To use this action in your workflow, add the following steps to your `.github/workflows/main.yml` file:
 
 ```yml
 name: Your workflow
@@ -25,17 +27,22 @@ jobs:
     name: build
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout Code
         uses: actions/checkout@v2
 
-      # validation steps
+      # Add validation steps here
 
-      - name: Add new version tag.
-        suses: xaxay/action-library/actions/action-increment-version@main
+      - name: Tag New Version
+        uses: your-username/action-repository-name@main
+        id: new-version
 
-      - name: Example how to use new version
+      - name: Use New Version
+        run: |
+          echo "The branch '${{ steps.new-version.outputs.branch }}' was tagged with new version '${{ steps.new-version.outputs.version }}'"
+
+      - name: Use New Version through environemnt variables
         run: |
           echo "The branch '$BRANCH' was tagged with new version '$VERSION'"
 
-      # publish steps
+      # Add CD steps here 
 ```
