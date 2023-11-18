@@ -8,41 +8,25 @@ outputs:
     description: The name of the current branch that has been tagged.
   version:
     description: The new version tag created.
-  old-version:
+  prev-version:
     description: The previous version tag before the new one was created.
 
 runs:
   using: ubuntu_latest
   steps:
-    - env:
+
+    - name: Get new version
+      id: get_version
+      uses: xaxay/action_library/actions/get-version@master
+
+    - name: Tag new version
+      env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        BRANCH="${GITHUB_REF#refs/heads/}"
-        echo "Current branch is $BRANCH"
-
-        TAGS=$(git tag --list --merged $BRANCH)
-
-        VERSION_TAGS=$(echo "$TAGS" | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$')
-        
-        VERSION=$(echo "$VERSION_TAGS" | sort -V | tail -n1)
-        # Check if the latest version is empty
-        if [ -z "$VERSION" ]; then
-          echo "Error: No version tags found"
-          exit 1
-        fi
-        echo "Latest tag version is $VERSION"
-
-        # Extract the current version numbers
-        MAJOR=$(echo "$VERSION" | cut -d. -f1)
-        MINOR=$(echo "$VERSION" | cut -d. -f2)
-        PATCH=$(echo "$VERSION" | cut -d. -f3)
-
-        # Increment the patch version
-        NEW_PATCH=$((PATCH + 1))
-
-        # Construct the new version tag
-        NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
-        echo "New tag version is $NEW_VERSION"
+         # Retrieve the branch and versions from outputs of get-version action
+        BRANCH=${{ steps.get_version.outputs.branch }}
+        VERSION=${{ steps.get_version.outputs.version }}
+        NEW_VERSION=${{ steps.get_version.outputs.next-version }}
 
         # Add new version tag and push
         git tag -a "$NEW_VERSION" -m "Version $NEW_VERSION"
@@ -51,9 +35,4 @@ runs:
         # Set the outputs
         echo "::set-output name=branch::$BRANCH"
         echo "::set-output name=version::$NEW_VERSION"
-        echo "::set-output name=old-version::$VERSION"
-
-        # Set the environemnt variables
-        echo "BRANCH=$BRANCH" >> $GITHUB_ENV
-        echo "VERSION=$NEW_VERSION" >> $GITHUB_ENV
-        echo "OLD_VERSION=$VERSION" >> $GITHUB_ENV
+        echo "::set-output name=prev-version::$VERSION"

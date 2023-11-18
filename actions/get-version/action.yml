@@ -1,5 +1,5 @@
 name: Get version
-description: Get version for a specified branch name.
+description: Get current and next versions for a specified branch name.
 
 inputs:
   branch:
@@ -10,7 +10,7 @@ outputs:
     description: The name of the branch for which version information was retrieved.
   version:
     description: The current latest version tag.
-  new-version:
+  next-version:
     description: The next version tag.
 
 runs:
@@ -48,9 +48,5 @@ runs:
         echo "New tag version is $NEW_VERSION"
 
         echo "::set-output name=branch::$BRANCH"
-        echo "::set-output name=new-version::$NEW_VERSION"
+        echo "::set-output name=next-version::$NEW_VERSION"
         echo "::set-output name=version::$VERSION"
-
-        echo "BRANCH=$BRANCH" >> $GITHUB_ENV
-        echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
-        echo "VERSION=$VERSION" >> $GITHUB_ENV
