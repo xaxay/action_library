@@ -19,20 +19,20 @@ runs:
       id: get_version
       uses: xaxay/action_library/actions/get-version@master
 
-    - name: Tag new version
-      # env:
-        # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-         # Retrieve the branch and versions from outputs of get-version action
-        BRANCH=${{ steps.get_version.outputs.branch }}
-        VERSION=${{ steps.get_version.outputs.version }}
-        NEW_VERSION=${{ steps.get_version.outputs.next-version }}
+    # - name: Tag new version
+    #   # env:
+    #     # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   run: |
+    #     # Retrieve the branch and versions from outputs of get-version action
+    #     BRANCH=${{ steps.get_version.outputs.branch }}
+    #     VERSION=${{ steps.get_version.outputs.version }}
+    #     NEW_VERSION=${{ steps.get_version.outputs.next-version }}
 
-        # Add new version tag and push
-        git tag -a "$NEW_VERSION" -m "Version $NEW_VERSION"
-        git push origin "$NEW_VERSION"
+    #     # Add new version tag and push
+    #     git tag -a "$NEW_VERSION" -m "Version $NEW_VERSION"
+    #     git push origin "$NEW_VERSION"
 
-        # Set the outputs
-        echo "::set-output name=branch::$BRANCH"
-        echo "::set-output name=version::$NEW_VERSION"
-        echo "::set-output name=prev-version::$VERSION"
+    #     # Set the outputs
+    #     echo "::set-output name=branch::$BRANCH"
+    #     echo "::set-output name=version::$NEW_VERSION"
+    #     echo "::set-output name=prev-version::$VERSION"
