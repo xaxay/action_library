@@ -17,36 +17,36 @@ runs:
   using: ubuntu_latest
   steps:
     # - env:
-        # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        BRANCH=${{ inputs.branch }}
+      # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    run: |
+      BRANCH=${{ inputs.branch }}
 
-        # Fallback to current branch name if input branch is not provided
-        if [[ -z "$BRANCH" ]]; then
-          BRANCH="${GITHUB_REF#refs/heads/}"
-        fi
-        
-        echo "Getting version information for branch $BRANCH"
+      # Fallback to current branch name if input branch is not provided
+      if [[ -z "$BRANCH" ]]; then
+        BRANCH="${GITHUB_REF#refs/heads/}"
+      fi
+      
+      echo "Getting version information for branch $BRANCH"
 
-        TAGS=$(git tag --list --merged $BRANCH)
-        VERSION_TAGS=$(echo "$TAGS" | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$')
-        
-        VERSION=$(echo "$VERSION_TAGS" | sort -V | tail -n1)
+      TAGS=$(git tag --list --merged $BRANCH)
+      VERSION_TAGS=$(echo "$TAGS" | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$')
+      
+      VERSION=$(echo "$VERSION_TAGS" | sort -V | tail -n1)
 
-        if [ -z "$VERSION" ]; then
-          echo "Error: No version tags found"
-          exit 1
-        fi
-        echo "Latest tag version is $VERSION"
+      if [ -z "$VERSION" ]; then
+        echo "Error: No version tags found"
+        exit 1
+      fi
+      echo "Latest tag version is $VERSION"
 
-        MAJOR=$(echo "$VERSION" | cut -d. -f1)
-        MINOR=$(echo "$VERSION" | cut -d. -f2)
-        PATCH=$(echo "$VERSION" | cut -d. -f3)
+      MAJOR=$(echo "$VERSION" | cut -d. -f1)
+      MINOR=$(echo "$VERSION" | cut -d. -f2)
+      PATCH=$(echo "$VERSION" | cut -d. -f3)
 
-        NEW_PATCH=$((PATCH + 1))
-        NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
-        echo "New tag version is $NEW_VERSION"
+      NEW_PATCH=$((PATCH + 1))
+      NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
+      echo "New tag version is $NEW_VERSION"
 
-        echo "::set-output name=branch::$BRANCH"
-        echo "::set-output name=next-version::$NEW_VERSION"
-        echo "::set-output name=version::$VERSION"
+      echo "::set-output name=branch::$BRANCH"
+      echo "::set-output name=next-version::$NEW_VERSION"
+      echo "::set-output name=version::$VERSION"
