@@ -20,8 +20,8 @@ runs:
       uses: xaxay/action_library/actions/get-version@master
 
     - name: Tag new version
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # env:
+        # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
          # Retrieve the branch and versions from outputs of get-version action
         BRANCH=${{ steps.get_version.outputs.branch }}

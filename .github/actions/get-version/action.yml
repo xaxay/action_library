@@ -16,8 +16,8 @@ outputs:
 runs:
   using: ubuntu_latest
   steps:
-    - env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    # - env:
+        # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         BRANCH=${{ inputs.branch }}
 
