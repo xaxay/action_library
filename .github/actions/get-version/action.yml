@@ -14,7 +14,7 @@ outputs:
     description: The next version tag.
 
 runs:
-  using: ubuntu_latest
+  # using: ubuntu_latest
   steps:
     # - env:
       # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
