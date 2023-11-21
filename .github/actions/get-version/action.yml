@@ -23,54 +23,54 @@ runs:
   # using: ubuntu_latest
   steps:
     - shell: bash
-    run: |
-      echo "Getting branch version information ... GITHUB_REF=${GITHUB_REF}"
+      run: |
+        echo "Getting branch version information ... GITHUB_REF=${GITHUB_REF}"
 
-      VERSION_PREFIX="${{ version_prefix }}"
-      echo "version_prefix: $VERSION_PREFIX"
+        VERSION_PREFIX="${{ version_prefix }}"
+        echo "version_prefix: $VERSION_PREFIX"
 
-      BRANCH="${{ inputs.branch }}"
+        BRANCH="${{ inputs.branch }}"
 
-      # Fallback to current branch name if input branch is not provided
-      if [[ -z "$BRANCH" ]]; then
-        BRANCH="${GITHUB_REF#refs/heads/}"
-      fi
-      
-      echo "branch: $BRANCH"
-
-      TAGS=$(git tag --list --merged $BRANCH)
-
-      if [[ ! -z TAGS ]]; then
-        VERSION_TAGS=$(echo "$TAGS" | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$')
-        if [[ ! -z VERSION_TAGS ]]; then
-          VERSION=$(echo "$VERSION_TAGS" | sort -V | tail -n1)
-        fi 
-      fi
-
-      echo "version: $VERSION"
-      if [ -z "$VERSION" ]]; then
-        if [ ! -z "$VERSION_PREFIX" ]]; then
-          echo "Checking if version prefix haa majo and minor part."
-          if [[ $VERSION_PREFIX =~ ^[0-9]+\.[0-9]+\.$ ]]; then
-            echo "Use version_prefix and patch=1 to make the next version."
-            VERSION=""
-            NEXT_VERSION = "${VERSION_PREFIX}1"
-          fi
+        # Fallback to current branch name if input branch is not provided
+        if [[ -z "$BRANCH" ]]; then
+          BRANCH="${GITHUB_REF#refs/heads/}"
         fi
-        echo "Error: No version tags found"
-        exit 1
-      else
-        MAJOR=$(echo "$VERSION" | cut -d. -f1)
-        MINOR=$(echo "$VERSION" | cut -d. -f2)
-        PATCH=$(echo "$VERSION" | cut -d. -f3)
+        
+        echo "branch: $BRANCH"
 
-        NEXT_PATCH=$((PATCH + 1))
-        NEXT_VERSION="$MAJOR.$MINOR.$NEXT_PATCH"
+        TAGS=$(git tag --list --merged $BRANCH)
 
-      fi
+        if [[ ! -z TAGS ]]; then
+          VERSION_TAGS=$(echo "$TAGS" | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$')
+          if [[ ! -z VERSION_TAGS ]]; then
+            VERSION=$(echo "$VERSION_TAGS" | sort -V | tail -n1)
+          fi 
+        fi
 
-      echo "next_version: $NEXT_VERSION"
+        echo "version: $VERSION"
+        if [ -z "$VERSION" ]]; then
+          if [ ! -z "$VERSION_PREFIX" ]]; then
+            echo "Checking if version prefix haa majo and minor part."
+            if [[ $VERSION_PREFIX =~ ^[0-9]+\.[0-9]+\.$ ]]; then
+              echo "Use version_prefix and patch=1 to make the next version."
+              VERSION=""
+              NEXT_VERSION = "${VERSION_PREFIX}1"
+            fi
+          fi
+          echo "Error: No version tags found"
+          exit 1
+        else
+          MAJOR=$(echo "$VERSION" | cut -d. -f1)
+          MINOR=$(echo "$VERSION" | cut -d. -f2)
+          PATCH=$(echo "$VERSION" | cut -d. -f3)
 
-      echo "::set-output name=branch::$BRANCH" >> $GITHUB_OUTPUT
-      echo "::set-output name=next-version::$NEW_VERSION" >> $GITHUB_OUTPUT
-      echo "::set-output name=version::$VERSION" >> $GITHUB_OUTPUT
+          NEXT_PATCH=$((PATCH + 1))
+          NEXT_VERSION="$MAJOR.$MINOR.$NEXT_PATCH"
+
+        fi
+
+        echo "next_version: $NEXT_VERSION"
+
+        echo "::set-output name=branch::$BRANCH" >> $GITHUB_OUTPUT
+        echo "::set-output name=next-version::$NEW_VERSION" >> $GITHUB_OUTPUT
+        echo "::set-output name=version::$VERSION" >> $GITHUB_OUTPUT
