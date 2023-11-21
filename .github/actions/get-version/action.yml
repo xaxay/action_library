@@ -23,7 +23,7 @@ runs:
   using: ubuntu_latest
   steps:
     - shell: bash
-      run: |
+      run: |-
         echo "Getting branch version information ... GITHUB_REF=${GITHUB_REF}"
 
         VERSION_PREFIX="${{ version_prefix }}"
