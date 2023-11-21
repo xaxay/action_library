@@ -57,8 +57,11 @@ runs:
               NEXT_VERSION = "${VERSION_PREFIX}1"
             fi
           fi
-          echo "Error: No version tags found"
-          exit 1
+
+          if [ -z "$NEXT_VERSION" ]]; then
+            echo "Error: No version tags found and version prefix with major.minor. verson parts is not specified."
+            exit 1
+          if
         else
           MAJOR=$(echo "$VERSION" | cut -d. -f1)
           MINOR=$(echo "$VERSION" | cut -d. -f2)
