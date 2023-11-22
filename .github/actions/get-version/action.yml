@@ -20,7 +20,7 @@ outputs:
     description: The next version tag.
 
 runs:
-  using: node20
+  using: composite
   steps:
     - shell: bash
       run: |
