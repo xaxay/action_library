@@ -9,6 +9,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Use Custom Action from Action Library
         uses: xaxay/action_library/.github/actions/get-version@master
 
